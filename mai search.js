@@ -34,7 +34,7 @@ div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before {
         button.addEventListener('click', function() {
             var title = removeLV(button.textContent);
             var diff = button.parentElement.className.slice(8,-10);
-            var url = 'https://www.youtube.com/results?search_query=maimai' + title + ' ' + diff;
+            var url = 'https://www.youtube.com/results?search_query=maimai+' + title + ' ' + diff;
             window.open(url.replace(' ', '+'), "_blank")
         });
     });
