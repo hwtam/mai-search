@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         mai search
-// @version      2.2
+// @name         mai-search
+// @version      2.3
 // @description  quick search maimai songs in youtube
 // @author       tomtom
 // @match        https://maimaidx-eng.com/maimai-mobile/record/
@@ -44,24 +44,37 @@ div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before, td[class="scoreRecor
         window.open(url.replace(' ', '+'), "_blank");
     }
 
+    function haveListener(button) {
+        if (button.getAttribute('yt')) {
+            return true;
+        }
+        button.setAttribute('yt', 'true');
+        console.log(button);
+        return false;
+    }
+
     function addEvent() {
         var buttons = document.querySelectorAll('td[class="scoreRecordCell songTitleCell"]');
         buttons.forEach(function(button) {
-            button.addEventListener('click', function() {
-                var title = button.textContent;
-                var diff = button.nextSibling.textContent;
-                searchYT(title, diff);
-            });
+            if (!haveListener(button)) {
+                button.addEventListener('click', function() {
+                    var title = button.textContent;
+                    var diff = button.nextSibling.textContent;
+                    searchYT(title, diff);
+                });
+            }
         });
     }
 
     var buttons = document.querySelectorAll('div[class="basic_block m_5 p_5 p_l_10 f_13 break"]');
     buttons.forEach(function(button) {
-        button.addEventListener('click', function() {
-            var title = removeLV(button.textContent);
-            var diff = button.parentElement.className.slice(8,-10);
-            searchYT(title, diff);
-        });
+        if (!haveListener(button)) {
+            button.addEventListener('click', function() {
+                var title = removeLV(button.textContent);
+                var diff = button.parentElement.className.slice(8,-10);
+                searchYT(title, diff);
+            });
+        }
     });
 
     var observer = new MutationObserver(() => {
