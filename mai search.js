@@ -43,7 +43,7 @@ div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before, td[class="scoreRecor
     function addEvent() {
         var buttons = document.querySelectorAll('td[class="scoreRecordCell songTitleCell"]');
         buttons.forEach(function(button) {
-            button.addEventListener('click', function() {
+            button.addEventListener('dblclick', function() {
                 var title = button.textContent;
                 var diff = button.nextSibling.textContent;
                 searchYT(title, diff);
