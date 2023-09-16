@@ -3,7 +3,7 @@
 // @version      1.0
 // @description  quick search maimai songs in youtube
 // @author       tomtom
-// @match        https://maimaidx-eng.com/*
+// @match        https://maimaidx-eng.com/maimai-mobile/record/
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
 // ==/UserScript==
@@ -34,8 +34,7 @@ div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before {
         button.addEventListener('click', function() {
             var title = removeLV(button.textContent);
             var diff = button.parentElement.className.slice(8,-10);
-            var url = 'https://www.youtube.com/results?search_query=maimai+' + title + ' ' + diff;
-            window.open(url.replace(' ', '+'), "_blank")
+            searchYT(title, diff);
         });
     });
 
@@ -44,4 +43,11 @@ div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before {
         var arr = str.split(' ');
         return str.replace('Lv ' + arr[arr.length-1], '');
     }
+
+    function searchYT (title, diff) {
+        var url = 'https://www.youtube.com/results?search_query=maimai+' + title + ' ' + diff;
+        window.open(url.replace(' ', '+'), "_blank");
+        return;
+    }
+
 })();
