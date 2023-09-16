@@ -3,7 +3,7 @@
 // @version      2.3
 // @description  quick search maimai songs in youtube
 // @author       tomtom
-// @match        https://maimaidx-eng.com/maimai-mobile/record/
+// @match        https://maimaidx-eng.com/maimai-mobile/record/*
 // @match        https://myjian.github.io/mai-tools/rating-calculator/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
