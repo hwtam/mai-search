@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         mai search
-// @version      2.0
+// @version      2.1
 // @description  quick search maimai songs in youtube
 // @author       tomtom
 // @match        https://maimaidx-eng.com/maimai-mobile/record/
@@ -15,14 +15,17 @@
     var styleElement = document.createElement("style");
     var str = `
 div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before, td[class="scoreRecordCell songTitleCell"]::before {
-  content: "Search";
+  content: '';
   display: inline-block;
-  padding: 0px 3px;
-  background-color: #eaeaea;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  height: 15px;
+  width: 15px;
+  padding-bottom: 1.5px;
+  vertical-align: middle;
   margin-right: 5px;
   cursor: pointer;
+  background-image: url('https://hwtam.github.io/asset/img/youtube.ico');
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 `;
     var cssRules = document.createTextNode(str);
