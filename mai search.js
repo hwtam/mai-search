@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         mai search
-// @version      2.1
+// @version      2.2
 // @description  quick search maimai songs in youtube
 // @author       tomtom
 // @match        https://maimaidx-eng.com/maimai-mobile/record/
@@ -26,6 +26,7 @@ div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before, td[class="scoreRecor
   background-image: url('https://hwtam.github.io/asset/img/youtube.ico');
   background-size: contain;
   background-repeat: no-repeat;
+  touch-action: manipulation;
 }
 `;
     var cssRules = document.createTextNode(str);
@@ -46,7 +47,7 @@ div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before, td[class="scoreRecor
     function addEvent() {
         var buttons = document.querySelectorAll('td[class="scoreRecordCell songTitleCell"]');
         buttons.forEach(function(button) {
-            button.addEventListener('dblclick', function() {
+            button.addEventListener('click', function() {
                 var title = button.textContent;
                 var diff = button.nextSibling.textContent;
                 searchYT(title, diff);
