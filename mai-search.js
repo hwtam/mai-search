@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         mai-search
-// @version      2.3
+// @version      3
 // @description  quick search maimai songs in youtube
 // @author       tomtom
 // @match        https://maimaidx-eng.com/maimai-mobile/record/*
@@ -12,9 +12,13 @@
 (function() {
     'use strict';
 
+    const url = window.location.href;
+
     var styleElement = document.createElement("style");
     var str = `
-div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before, td[class="scoreRecordCell songTitleCell"]::before {
+div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before,
+td[class="scoreRecordCell songTitleCell"]::before,
+div[class="music_name_block t_l f_13 break"]::before {
   content: '';
   display: inline-block;
   height: 15px;
@@ -33,12 +37,6 @@ div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before, td[class="scoreRecor
     styleElement.appendChild(cssRules);
     document.head.appendChild(styleElement);
 
-
-    function removeLV (str) {
-        var arr = str.split(' ');
-        return str.replace('Lv ' + arr[arr.length-1], '');
-    }
-
     function searchYT (title, diff) {
         var url = 'https://www.youtube.com/results?search_query=maimai+' + title + ' ' + diff;
         window.open(url.replace(' ', '+'), "_blank");
@@ -53,7 +51,8 @@ div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before, td[class="scoreRecor
         return false;
     }
 
-    function addEvent() {
+    // For https://myjian.github.io/mai-tools/rating-calculator/*
+    function addEvent_stalk() {
         var buttons = document.querySelectorAll('td[class="scoreRecordCell songTitleCell"]');
         buttons.forEach(function(button) {
             if (!haveListener(button)) {
@@ -66,21 +65,46 @@ div[class="basic_block m_5 p_5 p_l_10 f_13 break"]::before, td[class="scoreRecor
         });
     }
 
-    var buttons = document.querySelectorAll('div[class="basic_block m_5 p_5 p_l_10 f_13 break"]');
-    buttons.forEach(function(button) {
-        if (!haveListener(button)) {
-            button.addEventListener('click', function() {
-                var title = removeLV(button.textContent);
-                var diff = button.parentElement.className.slice(8,-10);
-                searchYT(title, diff);
-            });
-        }
-    });
+    // For https://maimaidx-eng.com/maimai-mobile/record/*
+    function addEvent_record() {
+        var buttons = document.querySelectorAll('div[class="basic_block m_5 p_5 p_l_10 f_13 break"]');
+        buttons.forEach(function(button) {
+            if (!haveListener(button)) {
+                button.addEventListener('click', function() {
+                    var str = button.textContent;
+                    var arr = str.split(' ');
+                    var title = str.replace('Lv ' + arr[arr.length-1], '');
+                    var diff = button.parentElement.className.slice(8,-10);
+                    searchYT(title, diff);
+                });
+            }
+        });
+    }
 
-    var observer = new MutationObserver(() => {
-        addEvent();
-    });
+    function addEvent_score() {
+        var buttons = document.querySelectorAll('div[class="music_name_block t_l f_13 break"]');
+        buttons.forEach(function(button) {
+            if (!haveListener(button)) {
+                button.addEventListener('click', function() {
+                    // some code
+                    searchYT(title, diff);
+                });
+            }
+        });
+    }
+
+    // main
+    var observer;
+    if (url.match("maimaidx-eng.com/maimai-mobile/record/musicMybest") ||
+    url.match("maimaidx-eng.com/maimai-mobile/record/musicGenre")) {
+        // making
+    } else if (url.match("maimaidx-eng.com/maimai-mobile/record")){
+        addEvent_record();
+        observer = new MutationObserver(addEvent_record);
+    } else if (url.match("myjian.github.io/mai-tools/rating-calculator")) {
+        addEvent_stalk();
+        observer = new MutationObserver(addEvent_stalk);
+    }
     observer.observe(document.body, {childList: true , subtree: true});
-    addEvent();
 
 })();
