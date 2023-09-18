@@ -94,9 +94,7 @@ div.w_250.f_l.t_l::after {
         var children = document.querySelectorAll('td.f_0 div.music_lv_back.m_3.t_c.f_14');
         children.forEach(function(child) {
             var button = child.parentNode;
-            console.log("test");
             if (!haveListener(button)) {
-                console.log(button);
                 button.style.cursor = "pointer !important";
                 button.addEventListener('click', function() {
                     var title = document.querySelector('div.m_5.f_15.break').textContent;
