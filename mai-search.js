@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         mai-search
-// @version      3.2
+// @version      3.3
 // @description  quick search maimai songs in youtube
 // @author       tomtom
 // @match        https://maimaidx-eng.com/maimai-mobile/record/*
@@ -95,7 +95,7 @@ div.w_250.f_l.t_l::after {
         children.forEach(function(child) {
             var button = child.parentNode;
             if (!haveListener(button)) {
-                button.style.cursor = "pointer !important";
+                button.style.cursor = "pointer";
                 button.addEventListener('click', function() {
                     var title = document.querySelector('div.m_5.f_15.break').textContent;
                     var value = button.parentElement.querySelector('input[name="diff"]').value;
