@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         mai-search
-// @version      3.3
+// @version      5
 // @description  quick search maimai songs in youtube
 // @author       tomtom
 // @match        https://maimaidx-eng.com/maimai-mobile/record/*
@@ -12,34 +12,12 @@
 (function() {
     'use strict';
 
-    const url = window.location.href;
+    const URL = window.location.href;
 
     var styleElement = document.createElement("style");
     var str = `
-div.basic_block.m_5.p_5.p_l_10.f_13.break::before,
-td.scoreRecordCell.songTitleCell::before,
-div.w_250.f_l.t_l::after {
-  content: '';
-  display: inline-block;
-  height: 15px;
-  width: 15px;
-  padding-bottom: 1.5px;
-  vertical-align: middle;
-  margin-right: 5px;
+.maiSearch {
   cursor: pointer;
-  background-image: url('https://hwtam.github.io/asset/img/youtube.ico');
-  background-size: contain;
-  background-repeat: no-repeat;
-  touch-action: manipulation;
-}
-
-div.w_250.f_l.t_l::after {
-    content: 'Click the level to mai-search';
-    width: 100%;
-    padding-left: 20px;
-    cursor: default;
-    margin-top: 20px;
-    box-sizing: border-box;
 }
 `;
     var cssRules = document.createTextNode(str);
@@ -47,27 +25,22 @@ div.w_250.f_l.t_l::after {
     document.head.appendChild(styleElement);
 
     function searchYT (title, diff) {
-        var url = 'https://www.youtube.com/results?search_query=maimai+' + title + ' ' + diff;
-        window.open(url.replace(' ', '+'), "_blank");
-    }
-
-    function haveListener(button) {
-        if (button.getAttribute('yt')) {
-            return true;
-        }
-        button.setAttribute('yt', 'true');
-        return false;
+        title = encodeURIComponent(title.replaceAll('-', ''));
+        var url = 'https://www.youtube.com/results?search_query=maimai+' + title + '+' + diff;
+        window.open(url, "_blank");
     }
 
     // For https://myjian.github.io/mai-tools/rating-calculator/*
-    function addEvent_stalk() {
-        var buttons = document.querySelectorAll('td.scoreRecordCell.songTitleCell');
-        buttons.forEach(function(button) {
-            if (!haveListener(button)) {
-                button.addEventListener('click', function() {
-                    var title = button.textContent;
-                    var diff = button.nextSibling.textContent;
-                    searchYT(title, diff);
+    function addEvent_tool() {
+        var parents = document.querySelectorAll("tbody tr.scoreRecordRow");
+        parents.forEach(function(parent) {
+            var yt = parent.querySelector('.levelCell');
+            if (! yt.classList.contains('maiSearch')) {
+                yt.classList.add('maiSearch');
+                yt.addEventListener('click', function() {
+                    var title = parent.querySelector('.songTitleCell').textContent;
+                    var diff = parent.className.slice(15);
+                    searchYT(title.replaceAll('▶ ', ''), diff);
                 });
             }
         });
@@ -75,14 +48,17 @@ div.w_250.f_l.t_l::after {
 
     // For https://maimaidx-eng.com/maimai-mobile/record/* , exclude /musicDetail/*
     function addEvent_record() {
-        var buttons = document.querySelectorAll('div.basic_block.m_5.p_5.p_l_10.f_13.break');
-        buttons.forEach(function(button) {
-            if (!haveListener(button)) {
-                button.addEventListener('click', function() {
-                    var str = button.textContent;
+        var parents = document.querySelectorAll('div.p_10.t_l.f_0.v_b');
+        parents.forEach(function(parent) {
+            var yt = parent.querySelector('img.music_img.m_5.m_r_0.f_l');
+            if (! yt.classList.contains('maiSearch')) {
+                yt.classList.add('maiSearch');
+                yt.addEventListener('click', function() {
+                    var txt = parent.querySelector("div.basic_block.m_5.p_5.p_l_10.f_13.break")
+                    var str = txt.textContent;
                     var arr = str.split(' ');
                     var title = str.replace('Lv ' + arr[arr.length-1], '');
-                    var diff = button.parentElement.className.slice(8,-10);
+                    var diff = txt.parentElement.className.slice(8,-10);
                     searchYT(title, diff);
                 });
             }
@@ -91,14 +67,13 @@ div.w_250.f_l.t_l::after {
 
     // For https://maimaidx-eng.com/maimai-mobile/record/musicDetail/*
     function addEvent_detail() {
-        var children = document.querySelectorAll('td.f_0 div.music_lv_back.m_3.t_c.f_14');
-        children.forEach(function(child) {
-            var button = child.parentNode;
-            if (!haveListener(button)) {
-                button.style.cursor = "pointer";
-                button.addEventListener('click', function() {
+        var yts = document.querySelectorAll('td.f_0 div.music_lv_back.m_3.t_c.f_14');
+        yts.forEach(function(yt) {
+            if (! yt.classList.contains('maiSearch')) {
+                yt.classList.add('maiSearch');
+                yt.addEventListener('click', function() {
                     var title = document.querySelector('div.m_5.f_15.break').textContent;
-                    var value = button.parentElement.querySelector('input[name="diff"]').value;
+                    var value = yt.parentElement.parentElement.querySelector('input[name="diff"]').value;
                     var diff;
                     switch(value) {
                         case '0': {diff = "basic"; break;}
@@ -116,15 +91,15 @@ div.w_250.f_l.t_l::after {
 
     // main
     var observer;
-    if (url.match("maimaidx-eng.com/maimai-mobile/record/musicDetail")) {
+    if (URL.match("maimaidx-eng.com/maimai-mobile/record/musicDetail")) {
         addEvent_detail();
         observer = new MutationObserver(addEvent_detail);
-    } else if (url.match("maimaidx-eng.com/maimai-mobile/record")){
+    } else if (URL.match("maimaidx-eng.com/maimai-mobile/record")){
         addEvent_record();
         observer = new MutationObserver(addEvent_record);
-    } else if (url.match("myjian.github.io/mai-tools/rating-calculator")) {
-        addEvent_stalk();
-        observer = new MutationObserver(addEvent_stalk);
+    } else if (URL.match("myjian.github.io/mai-tools/rating-calculator")) {
+        addEvent_tool();
+        observer = new MutationObserver(addEvent_tool);
     }
     observer.observe(document.body, {childList: true , subtree: true});
 
