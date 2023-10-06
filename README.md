@@ -1,4 +1,4 @@
-# mai-search [(Userscript)](https://github.com/hwtam/mai-search/blob/main/mai%20search.js)
+# mai-search [(Userscript)](https://github.com/hwtam/mai-search/blob/main/mai-search.js)
 
 ### You can see a youtube button next to the song title. Click the button the search the song with the corresponding difficulty on YouTube.
 
